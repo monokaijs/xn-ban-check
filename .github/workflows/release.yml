@@ -1,0 +1,46 @@
+﻿name: Build & Release (tag)
+
+on:
+  push:
+    tags:
+      - "v*"
+      - "*.*.*"
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Restore
+        run: dotnet restore ./BanCheckPlugin/BanCheckPlugin.csproj
+
+      - name: Build
+        run: dotnet build ./BanCheckPlugin/BanCheckPlugin.csproj -c Release --no-restore
+
+      # Publish produces the dll + deps in one folder (good for server deploy)
+      - name: Publish
+        run: dotnet publish src/BanCheckPlugin/BanCheckPlugin.csproj -c Release -o dist --no-build
+
+      - name: Package
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          mkdir -p out
+          zip -r "out/BanCheckPlugin_${TAG}.zip" dist README.md schema.sql 2>/dev/null || \
+          zip -r "out/BanCheckPlugin_${TAG}.zip" dist
+
+      - name: Create GitHub Release + upload asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: out/*.zip
+          generate_release_notes: true
