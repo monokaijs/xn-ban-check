@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Match this version to your installed CounterStrikeSharp version if needed -->
+    <PackageReference Include="CounterStrikeSharp.API" Version="1.0.354" />
+    <PackageReference Include="MySqlConnector" Version="2.5.0" />
+  </ItemGroup>
+
+</Project>
